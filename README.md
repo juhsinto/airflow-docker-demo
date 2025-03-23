@@ -1,34 +1,54 @@
 
-Setting up in docker - https://www.youtube.com/watch?v=aTaytcxy2Ck
+# Airflow Docker Setup Guide
 
-Accuracies DAG example - https://www.youtube.com/watch?v=IH1-0hwFZRQ
+## Video Resources
+- [Setting up Airflow in Docker](https://www.youtube.com/watch?v=aTaytcxy2Ck)
+- [Accuracies DAG Example](https://www.youtube.com/watch?v=IH1-0hwFZRQ)
 
+## Setup Steps
 
-Set up:
-// initial set up
-docker compose up airflow-init
+### Initial Setup
+1. Initialize Airflow:
+   ```bash
+   docker compose up airflow-init
+   ```
 
-Make sure enough memory:
-`docker run --rm "debian:bookworm-slim" bash -c 'numfmt --to iec $(echo $(($(getconf _PHYS_PAGES) * $(getconf PAGE_SIZE))))'\n `
+2. Check available memory:
+   ```bash
+   docker run --rm "debian:bookworm-slim" bash -c 'numfmt --to iec $(echo $(($(getconf PHYSPAGES) * $(getconf PAGE_SIZE))))'
+   ```
 
-// make env file
-echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+3. Create environment file:
+   ```bash
+   echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+   ```
 
-// start airflow
-docker compose up
+4. Start Airflow:
+   ```bash
+   docker compose up
+   ```
 
-// check the services
-docker ps
+### Verification
 
-// check airflow version
-docker exec 26e17224a6ea airflow version
+1. Check running services:
+   ```bash
+   docker ps
+   ```
 
-// check if you can query the api without auth
-curl -X GET "http://localhost:8080/api/v1/dags"
+2. Verify Airflow version:
+   ```bash
+   docker exec <container_id> airflow version
+   ```
 
-// check if you can query the api with auth
-curl -X GET --user "airflow:airflow" http://localhost:8080/api/v1/dags"
+3. Test API access without authentication:
+   ```bash
+   curl -X GET "http://localhost:8080/api/v1/dags"
+   ```
 
+4. Test API access with authentication:
+   ```bash
+   curl -X GET --user "airflow:airflow" "http://localhost:8080/api/v1/dags"
+   ```
 Notes: 
 - Tasks consist of operators
 - There are several operators (Bash, Python, Postgres)
